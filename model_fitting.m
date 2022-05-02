@@ -50,19 +50,18 @@ data_80 = data_80(1:end_sample);
 % plot_func(1, data_50, sampling_time)
 plot_func(1, data_70, sampling_time, 'r')
 plot_func(1, data_80, sampling_time, 'b')
-legend('PWM = 0.7', 'PWM = 0.8')
+% legend('DT = 0.7', 'DT = 0.8')
 %%
 % %% Manually fit - Transfer function
-t = 0:sampling_time:5-sampling_time;
-
-K = 630; T2 = 0.0001; T = 0.03;
-sat = 0.3; curv = 4;
-
-x = [K, T, sat, curv];
-
-PWM = 0.15; y = motor_func(PWM, x, t); %plot(t, y)
-PWM = 0.2; y = motor_func(PWM, x, t); %plot(t, y)
-PWM = 0.4; y = motor_func(PWM, x, t); %plot(t, y)
+% t = 0:sampling_time:5-sampling_time;
+% 
+% K = 630*0.3; T = 0.03; curv = 4;
+% 
+% x = [K, T, curv];
+% 
+% PWM = 0.15; y = motor_func(PWM, x, t); %plot(t, y)
+% PWM = 0.2; y = motor_func(PWM, x, t); %plot(t, y)
+% PWM = 0.4; y = motor_func(PWM, x, t); %plot(t, y)
 % 
 % plot_func(8, data_15, sampling_time, 'r')
 % plot_func(9, data1_20, sampling_time, 'r')
@@ -98,13 +97,10 @@ PWM = 0.4; y = motor_func(PWM, x, t); %plot(t, y)
 x_collected = [];
 
 % K, T2, T, Sat, Curv
-x0 = [200, 0.02, 0.3, 4];
+x0 = [200, 0.02, 4];
  
-lb = [400 0    0.1 2];
-ub = [800 0.05 0.5 6];
-% [x,resnorm, ~, exitflag,output] = lsqcurvefit(F, x0, xdata, ydata, lb, ub);
-
-% [x, resnorm] = fit(0.4, data_40, x0, sampling_time, lb, ub);
+lb = [0   0    0];
+ub = [800 0.05 8];
 
 %% Multiple data
 [x1, resnorm1] = fit(0.15, data_15, x0, sampling_time, lb, ub);
@@ -121,47 +117,49 @@ MSE = [];
 plot_func(2, data_15, sampling_time, 'r')
 PWM = 0.15; y = motor_func(PWM, x_final, t); %plot(t, y, 'b','LineWidth', 3); hold on;
 plot_func(2, y, sampling_time, 'b')
-legend("Real data", "Simulated data")
-title("PWM=" + num2str(PWM))
+% legend("Real data", "Simulated data")
+title("DT=" + num2str(PWM))
 MSE = [MSE, immse(y, data_15)];
 
 plot_func(3, data1_20, sampling_time, 'r')
 PWM = 0.2; y = motor_func(PWM, x_final, t); %plot(t, y, 'b','LineWidth', 3)
 plot_func(3, y, sampling_time, 'b')
-legend("Real data", "Simulated data")
-title("PWM=" + num2str(PWM))
+% legend("Real data", "Simulated data")
+title("DT=" + num2str(PWM))
 MSE = [MSE, immse(y, data1_20)];
 
 plot_func(4, data_40, sampling_time, 'r')
 PWM = 0.4; y = motor_func(PWM, x_final, t); %plot(t, y, 'b', 'LineWidth', 3)
 plot_func(4, y, sampling_time, 'b')
-legend("Real data", "Simulated data")
-title("PWM=" + num2str(PWM))
+% legend("Real data", "Simulated data")
+title("DT=" + num2str(PWM))
 MSE = [MSE, immse(y, data_40)];
 
 plot_func(5, data_50, sampling_time, 'r')
 PWM = 0.5; y = motor_func(PWM, x_final, t); %plot(t, y, 'b','LineWidth', 3)
 plot_func(5, y, sampling_time, 'b')
-legend("Real data", "Simulated data")
-title("PWM=" + num2str(PWM))
+% legend("Real data", "Simulated data")
+title("DT=" + num2str(PWM))
 MSE = [MSE, immse(y, data_50)];
 
 plot_func(6, data_70, sampling_time, 'r')
 PWM = 0.7; y = motor_func(PWM, x_final, t); %plot(t, y, 'b','LineWidth', 3)
 plot_func(6, y, sampling_time, 'b')
-legend("Real data", "Simulated data")
-title("PWM=" + num2str(PWM))
+% legend("Real data", "Simulated data")
+title("DT=" + num2str(PWM))
 MSE = [MSE, immse(y, data_70)];
 
 plot_func(7, data_80, sampling_time, 'r')
 PWM = 0.8; y = motor_func(PWM, x_final, t); %plot(t, y, 'b','LineWidth', 3)
 plot_func(7, y, sampling_time, 'b')
-legend("Real data", "Simulated data")   
-title("PWM=" + num2str(PWM))
+% legend("Real data", "Simulated data")   
+title("DT=" + num2str(PWM))
 MSE = [MSE, immse(y, data_80)];
 autoArrangeFigures()
+
+saveImageFigures('output')
+
 %%
-% saveImageFigures('output')
 
 function [x, resnorm] = fit(pwm, x, x0, sampling_time, lb, ub)
     xdata = 0 : sampling_time:(size(x, 1)-1)*sampling_time;
